@@ -1,3 +1,4 @@
+import { Sidebar } from '@/dashboardComponents/sidebar';
 import { PropsWithChildren } from 'react';
 
 const DashboardLayout = ({ children }: PropsWithChildren) => {
@@ -8,11 +9,7 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
           Navbar
         </nav>
       </header>
-      <aside className='fixed inset-y-0 z-50 hidden h-full w-56 flex-col md:flex'>
-        <div className='flex h-full flex-col overflow-y-auto border-r bg-white shadow-md'>
-          Sidebar
-        </div>
-      </aside>
+      <Sidebar />
       <main className='p-4 md:ml-56'>{children}</main>
     </div>
   );
