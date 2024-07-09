@@ -9,12 +9,16 @@ import {
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { EditSubmitButton } from '@/dashboardComponents/shared';
+import { ToastMessage } from '@/enums';
+import { updateCourseTitle } from '@/lib/actions/course.action';
 import { cn } from '@/lib/utils';
-import { courseNameFormSchema, TCourseDescribeFormData } from '@/validation';
+import { courseDescribeSchema, TCourseDescribeFormData } from '@/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Pencil } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 interface CourseDescriptionFormProps {
   description: string;
@@ -27,8 +31,9 @@ const CourseDescriptionForm = ({
 }: CourseDescriptionFormProps) => {
   const [isPending, setIsPending] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const pathname = usePathname();
   const form = useForm<TCourseDescribeFormData>({
-    resolver: zodResolver(courseNameFormSchema),
+    resolver: zodResolver(courseDescribeSchema),
     defaultValues: {
       description: description
     }
@@ -38,9 +43,30 @@ const CourseDescriptionForm = ({
   const toggleEditing = () => {
     setIsEditing(current => !current);
   };
+
   const onSubmit = async (data: TCourseDescribeFormData) => {
-    console.log(data);
+    try {
+      setIsPending(true);
+      const res = await updateCourseTitle({
+        courseId,
+        course: {
+          description: data.description
+        },
+        pathname
+      });
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success(ToastMessage.success);
+        toggleEditing();
+      }
+    } catch {
+      toast.error(ToastMessage.error);
+    } finally {
+      setIsPending(false);
+    }
   };
+
   return (
     <div className='space-y-2.5 rounded-md bg-slate-200 p-4'>
       <div className='flex items-center justify-between'>
