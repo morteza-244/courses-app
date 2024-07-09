@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang='en' className={inter.variable}>
+      <html lang='en' className={inter.className}>
         <body>{children}</body>
       </html>
     </ClerkProvider>
