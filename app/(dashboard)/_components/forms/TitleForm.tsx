@@ -48,7 +48,9 @@ const TitleForm = ({ title, courseId }: TitleFormProps) => {
       setIsPending(true);
       const res = await updateCourseTitle({
         courseId,
-        title: data.title,
+        course: {
+          title: data.title
+        },
         pathname
       });
       if (res?.error) {

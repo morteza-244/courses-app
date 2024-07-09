@@ -1,5 +1,7 @@
+import { Course } from '@prisma/client';
+
 export interface IUpdateCourseTitleParams {
-  title: string;
+  course: Partial<Course>;
   courseId: string;
-  pathname: string
+  pathname: string;
 }

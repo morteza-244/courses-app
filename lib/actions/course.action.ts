@@ -43,7 +43,7 @@ export const getCourseById = async (id: string) => {
 
 export const updateCourseTitle = async (data: IUpdateCourseTitleParams) => {
   const { userId } = auth();
-  const { title, courseId, pathname } = data;
+  const { course, courseId, pathname } = data;
   try {
     if (!userId) {
       return { error: "You're unauthorized! Please login to your account." };
@@ -53,9 +53,7 @@ export const updateCourseTitle = async (data: IUpdateCourseTitleParams) => {
         id: courseId,
         userId
       },
-      data: {
-        title
-      }
+      data: { ...course }
     });
     revalidatePath(pathname);
     return { updatedCourse };
