@@ -1,5 +1,5 @@
 import { IconBadge } from '@/components/ui/icon-badge';
-import { TitleForm } from '@/dashboardComponents/forms';
+import { CourseDescriptionForm, TitleForm } from '@/dashboardComponents/forms';
 import { getCourseById } from '@/lib/actions/course.action';
 import { auth } from '@clerk/nextjs/server';
 import { LayoutDashboard } from 'lucide-react';
@@ -36,8 +36,14 @@ const CourseDetail = async ({ params }: { params: { id: string } }) => {
           Customize your course
         </h2>
       </div>
-      <div className='grid grid-cols-1 md:grid-cols-2'>
-        <TitleForm title={course.title} courseId={course.id} />
+      <div className='grid grid-cols-1 gap-5 gap-x-5 md:grid-cols-2'>
+        <div className='space-y-6'>
+          <TitleForm title={course.title} courseId={course.id} />
+          <CourseDescriptionForm
+            description={course.description!}
+            courseId={course.id}
+          />
+        </div>
       </div>
     </div>
   );
