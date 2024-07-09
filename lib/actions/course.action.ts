@@ -24,3 +24,18 @@ export const createCourse = async (data: TCourseNameFormData) => {
     handleError(error);
   }
 };
+
+export const getCourseById = async (id: string) => {
+  try {
+    const course = await prisma.course.findUnique({
+      where: {
+        id
+      }
+    });
+
+
+    return course ;
+  } catch (error) {
+    handleError(error);
+  }
+};
