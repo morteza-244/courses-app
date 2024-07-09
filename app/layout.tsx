@@ -1,3 +1,4 @@
+import { Toaster } from '@/components/ui/sonner';
 import { ClerkProvider } from '@clerk/nextjs';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -18,7 +19,16 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang='en' className={inter.className}>
-        <body>{children}</body>
+        <body>
+          {children}
+          <Toaster
+            className={inter.className}
+            richColors
+            closeButton
+            duration={1500}
+            position='top-center'
+          />
+        </body>
       </html>
     </ClerkProvider>
   );

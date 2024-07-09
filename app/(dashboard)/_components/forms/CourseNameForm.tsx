@@ -11,11 +11,14 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { ToastMessage } from '@/enums';
+import { createCourse } from '@/lib/actions/course.action';
 import { courseNameFormSchema, TCourseNameFormData } from '@/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 const CourseNameForm = () => {
   const [isPending, setIsPending] = useState(false);
@@ -29,8 +32,22 @@ const CourseNameForm = () => {
 
   const { isSubmitting, isValid } = form.formState;
 
-  const onSubmit = (data: TCourseNameFormData) => {
-    console.log(data);
+  const onSubmit = async (data: TCourseNameFormData) => {
+    try {
+      setIsPending(true);
+      const res = await createCourse(data);
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success('Your course created successfully');
+        form.reset();
+        router.push(`/teacher/courses/${res?.newCourse?.id}`);
+      }
+    } catch {
+      toast.error(ToastMessage.error);
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
