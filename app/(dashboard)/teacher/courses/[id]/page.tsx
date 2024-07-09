@@ -1,3 +1,4 @@
+import CourseImageForm from '@/app/(dashboard)/_components/forms/CourseImageForm';
 import { IconBadge } from '@/components/ui/icon-badge';
 import { CourseDescriptionForm, TitleForm } from '@/dashboardComponents/forms';
 import { getCourseById } from '@/lib/actions/course.action';
@@ -43,6 +44,7 @@ const CourseDetail = async ({ params }: { params: { id: string } }) => {
             description={course.description!}
             courseId={course.id}
           />
+          <CourseImageForm imageUrl={course.imageUrl!} courseId={course.id} />
         </div>
       </div>
     </div>
