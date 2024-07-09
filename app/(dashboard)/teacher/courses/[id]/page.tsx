@@ -37,7 +37,7 @@ const CourseDetail = async ({ params }: { params: { id: string } }) => {
         </h2>
       </div>
       <div className='grid grid-cols-1 md:grid-cols-2'>
-        <TitleForm title={course.title} />
+        <TitleForm title={course.title} courseId={course.id} />
       </div>
     </div>
   );
