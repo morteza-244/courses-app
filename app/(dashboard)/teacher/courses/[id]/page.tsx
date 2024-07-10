@@ -1,6 +1,9 @@
-import CourseImageForm from '@/app/(dashboard)/_components/forms/CourseImageForm';
 import { IconBadge } from '@/components/ui/icon-badge';
-import { CourseDescriptionForm, TitleForm } from '@/dashboardComponents/forms';
+import {
+  CourseDescriptionForm,
+  CourseImageForm,
+  TitleForm
+} from '@/dashboardComponents/forms';
 import { getCourseById } from '@/lib/actions/course.action';
 import { auth } from '@clerk/nextjs/server';
 import { LayoutDashboard } from 'lucide-react';

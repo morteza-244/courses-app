@@ -13,3 +13,12 @@ export const courseDescribeSchema = z.object({
 });
 
 export type TCourseDescribeFormData = z.infer<typeof courseDescribeSchema>;
+
+export const categoryFormSchema = z.object({
+  title: z.string().min(3, { message: 'Title must be at least 3 character' }),
+  description: z
+    .string()
+    .min(25, { message: 'Description must be at least 25 characters' })
+});
+
+export type TCategoryFormData = z.infer<typeof categoryFormSchema>;
