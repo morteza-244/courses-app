@@ -11,10 +11,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { SubmitLoading } from '@/dashboardComponents/shared';
+import { ToastMessage } from '@/enums';
+import { createCategory } from '@/lib/actions/category.action';
 import { categoryFormSchema, TCategoryFormData } from '@/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 const CategoryForm = () => {
   const [isPending, setIsPending] = useState(false);
@@ -25,13 +28,32 @@ const CategoryForm = () => {
       title: ''
     }
   });
+  
   const { isValid, isSubmitting } = form.formState;
+
   const onSubmit = async (data: TCategoryFormData) => {
-    console.log(data);
+    try {
+      setIsPending(true);
+      const res = await createCategory(data);
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success('Your category created.');
+        form.reset();
+      }
+    } catch {
+      toast.error(ToastMessage.error);
+    } finally {
+      setIsPending(false);
+    }
   };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8 sm:w-96'>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className='space-y-8 sm:w-96'
+      >
         <FormField
           control={form.control}
           name='title'
@@ -69,7 +91,11 @@ const CategoryForm = () => {
           )}
         />
         <div className='flex items-center gap-x-3'>
-          <Button variant={'secondary'} type='button' onClick={() => form.reset()}>
+          <Button
+            variant={'secondary'}
+            type='button'
+            onClick={() => form.reset()}
+          >
             Cancel
           </Button>
           <Button
