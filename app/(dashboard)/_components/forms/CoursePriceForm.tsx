@@ -11,12 +11,16 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { EditSubmitButton } from '@/dashboardComponents/shared';
+import { ToastMessage } from '@/enums';
+import { updateCourseTitle } from '@/lib/actions/course.action';
 import { cn, formatPrice } from '@/lib/utils';
 import { TCoursePriceFormData, coursePriceSchema } from '@/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Pencil } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 interface CoursePriceFormProps {
   price: number;
@@ -26,7 +30,7 @@ interface CoursePriceFormProps {
 const CoursePriceForm = ({ price, courseId }: CoursePriceFormProps) => {
   const [isPending, setIsPending] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-
+  const pathname = usePathname();
   const form = useForm<TCoursePriceFormData>({
     resolver: zodResolver(coursePriceSchema),
     defaultValues: {
@@ -41,7 +45,26 @@ const CoursePriceForm = ({ price, courseId }: CoursePriceFormProps) => {
   const { isValid, isSubmitting } = form.formState;
 
   const onSubmit = async (data: TCoursePriceFormData) => {
-    console.log(data);
+    try {
+      setIsPending(true);
+      const res = await updateCourseTitle({
+        courseId,
+        course: {
+          price: data.price
+        },
+        pathname
+      });
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success(ToastMessage.success);
+        toggleEditing();
+      }
+    } catch {
+      toast.error(ToastMessage.error);
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
@@ -65,7 +88,7 @@ const CoursePriceForm = ({ price, courseId }: CoursePriceFormProps) => {
             !price && 'italic text-slate-500'
           )}
         >
-          {price || 'No price'}
+          {formatPrice(price) || 'No price'}
         </p>
       )}
       {isEditing && (
