@@ -36,3 +36,16 @@ export const createCategory = async (data: TCategoryFormData) => {
     handleError(error);
   }
 };
+
+export const getCategories = async () => {
+  try {
+    const categories = await prisma.category.findMany({
+      orderBy: {
+        name: 'asc'
+      }
+    });
+    return categories;
+  } catch (error) {
+    handleError(error);
+  }
+};

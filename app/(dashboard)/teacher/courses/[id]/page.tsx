@@ -27,11 +27,11 @@ const CourseDetail = async ({ params }: { params: { id: string } }) => {
   const totalFields = requiredFields.length;
   const completedFields = requiredFields.filter(Boolean).length;
   const completionText = `(${completedFields}/${totalFields})`;
-  const categoryOptions = [
-    { value: 'computer', label: 'Computer' },
-    { value: 'design', label: 'Design' },
-    { value: 'technology', label: 'Technology' }
-  ];
+  const categories = await getCategories();
+  const categoryOptions = categories?.map(category => ({
+    label: category.name,
+    value: category.id
+  }));
   return (
     <div className='space-y-8'>
       <div className='flex flex-col gap-y-2'>
@@ -55,7 +55,7 @@ const CourseDetail = async ({ params }: { params: { id: string } }) => {
           />
           <CourseImageForm imageUrl={course.imageUrl!} courseId={course.id} />
           <CourseCategoryForm
-            categoryOptions={categoryOptions}
+            categoryOptions={categoryOptions!}
             courseId={course.id}
             categoryId={course.categoryId!}
           />
