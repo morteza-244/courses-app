@@ -1,4 +1,5 @@
 import CourseCategoryForm from '@/app/(dashboard)/_components/forms/CourseCategoryForm';
+import CoursePriceForm from '@/app/(dashboard)/_components/forms/CoursePriceForm';
 import { IconBadge } from '@/components/ui/icon-badge';
 import {
   CourseDescriptionForm,
@@ -8,7 +9,7 @@ import {
 import { getCategories } from '@/lib/actions/category.action';
 import { getCourseById } from '@/lib/actions/course.action';
 import { auth } from '@clerk/nextjs/server';
-import { LayoutDashboard } from 'lucide-react';
+import { LayoutDashboard, ListChecks } from 'lucide-react';
 import { redirect } from 'next/navigation';
 
 const CourseDetail = async ({ params }: { params: { id: string } }) => {
@@ -40,14 +41,14 @@ const CourseDetail = async ({ params }: { params: { id: string } }) => {
           Complete all fields {completionText}
         </span>
       </div>
-      <div className='flex items-center gap-x-2'>
-        <IconBadge icon={LayoutDashboard} />
-        <h2 className='font-semibold sm:text-[18px] md:text-[15px] lg:text-xl'>
-          Customize your course
-        </h2>
-      </div>
       <div className='grid grid-cols-1 gap-5 gap-x-5 md:grid-cols-2'>
         <div className='space-y-6'>
+          <div className='flex items-center gap-x-2'>
+            <IconBadge icon={LayoutDashboard} />
+            <h2 className='font-semibold sm:text-[18px] md:text-[15px] lg:text-xl'>
+              Customize your course
+            </h2>
+          </div>
           <TitleForm title={course.title} courseId={course.id} />
           <CourseDescriptionForm
             description={course.description!}
@@ -59,6 +60,15 @@ const CourseDetail = async ({ params }: { params: { id: string } }) => {
             courseId={course.id}
             categoryId={course.categoryId!}
           />
+        </div>
+        <div className='space-y-6'>
+          <div className='flex items-center gap-x-2'>
+            <IconBadge icon={ListChecks} />
+            <h2 className='font-semibold sm:text-[18px] md:text-[15px] lg:text-xl'>
+              Course chapters
+            </h2>
+          </div>
+          <CoursePriceForm courseId={course.id} price={course.price!} />
         </div>
       </div>
     </div>
