@@ -1,9 +1,11 @@
+import CourseCategoryForm from '@/app/(dashboard)/_components/forms/CourseCategoryForm';
 import { IconBadge } from '@/components/ui/icon-badge';
 import {
   CourseDescriptionForm,
   CourseImageForm,
   TitleForm
 } from '@/dashboardComponents/forms';
+import { getCategories } from '@/lib/actions/category.action';
 import { getCourseById } from '@/lib/actions/course.action';
 import { auth } from '@clerk/nextjs/server';
 import { LayoutDashboard } from 'lucide-react';
@@ -25,7 +27,11 @@ const CourseDetail = async ({ params }: { params: { id: string } }) => {
   const totalFields = requiredFields.length;
   const completedFields = requiredFields.filter(Boolean).length;
   const completionText = `(${completedFields}/${totalFields})`;
-
+  const categoryOptions = [
+    { value: 'computer', label: 'Computer' },
+    { value: 'design', label: 'Design' },
+    { value: 'technology', label: 'Technology' }
+  ];
   return (
     <div className='space-y-8'>
       <div className='flex flex-col gap-y-2'>
@@ -48,6 +54,11 @@ const CourseDetail = async ({ params }: { params: { id: string } }) => {
             courseId={course.id}
           />
           <CourseImageForm imageUrl={course.imageUrl!} courseId={course.id} />
+          <CourseCategoryForm
+            categoryOptions={categoryOptions}
+            courseId={course.id}
+            categoryId={course.categoryId!}
+          />
         </div>
       </div>
     </div>
