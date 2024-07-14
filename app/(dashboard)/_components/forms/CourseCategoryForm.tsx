@@ -51,6 +51,7 @@ const CourseCategoryForm = ({
   )?.label;
   const onSubmit = async (data: TCourseCategoryFormData) => {
     try {
+      setIsPending(true);
       const res = await updateCourseTitle({
         courseId,
         course: {
