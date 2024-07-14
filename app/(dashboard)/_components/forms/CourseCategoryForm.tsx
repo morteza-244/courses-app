@@ -8,14 +8,17 @@ import {
   FormItem,
   FormMessage
 } from '@/components/ui/form';
-import { EditSubmitButton } from '@/dashboardComponents/shared';
+import { EditSubmitButton, SelectOption } from '@/dashboardComponents/shared';
+import { ToastMessage } from '@/enums';
+import { updateCourseTitle } from '@/lib/actions/course.action';
 import { cn } from '@/lib/utils';
 import { courseCategorySchema, TCourseCategoryFormData } from '@/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Pencil } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import SelectOption from '../shared/SelectOption';
+import { toast } from 'sonner';
 
 interface CourseCategoryFormProps {
   categoryOptions: { label: string; value: string }[];
@@ -28,6 +31,7 @@ const CourseCategoryForm = ({
   courseId,
   categoryId
 }: CourseCategoryFormProps) => {
+  const pathname = usePathname();
   const [isPending, setIsPending] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const form = useForm<TCourseCategoryFormData>({
@@ -37,16 +41,32 @@ const CourseCategoryForm = ({
     }
   });
   const { isValid, isSubmitting } = form.formState;
+
   const toggleEditing = () => {
     setIsEditing(current => !current);
-    form.reset();
   };
 
   const currentCategory = categoryOptions.find(
     category => category.value === categoryId
   )?.label;
   const onSubmit = async (data: TCourseCategoryFormData) => {
-    console.log(data);
+    try {
+      const res = await updateCourseTitle({
+        courseId,
+        course: {
+          categoryId: data.categoryId
+        },
+        pathname
+      });
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success(ToastMessage.success);
+        toggleEditing();
+      }
+    } catch {
+      toast.error(ToastMessage.error);
+    }
   };
 
   return (
