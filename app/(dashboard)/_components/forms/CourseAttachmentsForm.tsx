@@ -4,7 +4,7 @@ import { FileUploader } from '@/dashboardComponents/shared';
 import { ToastMessage } from '@/enums';
 import { createAttachment } from '@/lib/actions/attachments.action';
 import { Attachment, Course } from '@prisma/client';
-import { PlusCircle } from 'lucide-react';
+import { File, PlusCircle } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -67,6 +67,19 @@ const CourseAttachmentsForm = ({
         <>
           {course.attachment.length === 0 && (
             <p className='text-sm italic text-slate-500'>No attachments</p>
+          )}
+          {course.attachment.length > 0 && (
+            <div className='space-y-2'>
+              {course.attachment.map(item => (
+                <div
+                  key={item.id}
+                  className='flex w-full items-center rounded-md bg-sky-100 p-3 text-indigo-600'
+                >
+                  <File size={20} className='mr-1' />
+                  <p className='line-clamp-1 text-sm'>{item.name}</p>
+                </div>
+              ))}
+            </div>
           )}
         </>
       )}
