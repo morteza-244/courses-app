@@ -2,9 +2,13 @@
 import { Button } from '@/components/ui/button';
 import { FileUploader } from '@/dashboardComponents/shared';
 import { ToastMessage } from '@/enums';
-import { createAttachment } from '@/lib/actions/attachments.action';
+import {
+  createAttachment,
+  deleteAttachment
+} from '@/lib/actions/attachments.action';
+import { TDeleteAttachment } from '@/types';
 import { Attachment, Course } from '@prisma/client';
-import { File, PlusCircle } from 'lucide-react';
+import { File, Loader2, PlusCircle, Trash } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -18,6 +22,7 @@ const CourseAttachmentsForm = ({
   courseId,
   course
 }: CourseAttachmentsFormProps) => {
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const pathname = usePathname();
 
@@ -40,6 +45,26 @@ const CourseAttachmentsForm = ({
       }
     } catch {
       toast.error(ToastMessage.error);
+    }
+  };
+
+  const onDelete = async (data: TDeleteAttachment) => {
+    try {
+      setIsDeleting(true);
+      const res = await deleteAttachment({
+        courseId: data.courseId,
+        attachmentId: data.attachmentId,
+        pathname
+      });
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success(ToastMessage.success);
+      }
+    } catch {
+      toast.error(ToastMessage.error);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -73,10 +98,29 @@ const CourseAttachmentsForm = ({
               {course.attachment.map(item => (
                 <div
                   key={item.id}
-                  className='flex w-full items-center rounded-md bg-sky-100 p-3 text-indigo-600'
+                  className='flex w-full items-center justify-between rounded-md bg-sky-100 p-3 text-indigo-600'
                 >
-                  <File size={20} className='mr-1' />
-                  <p className='line-clamp-1 text-sm'>{item.name}</p>
+                  <div className='flex items-center gap-x-2'>
+                    <File size={20} className='mr-1' />
+                    <p className='line-clamp-1 text-sm'>{item.name}</p>
+                  </div>
+                  <Button
+                    type='button'
+                    onClick={() =>
+                      onDelete({
+                        courseId: item.courseId,
+                        attachmentId: item.id
+                      })
+                    }
+                    size={'icon'}
+                    variant={'secondary'}
+                  >
+                    {isDeleting ? (
+                      <Loader2 size={17} className='animate-spin' />
+                    ) : (
+                      <Trash size={17} className='text-zinc-900' />
+                    )}
+                  </Button>
                 </div>
               ))}
             </div>

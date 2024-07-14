@@ -4,7 +4,10 @@ import { handleError } from '@/lib/utils';
 import prisma from '@/prisma/client';
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
-import { ICreateAttachmentsParams } from './shared.types';
+import {
+  ICreateAttachmentsParams,
+  IDeleteAttachmentParams
+} from './shared.types';
 
 export const createAttachment = async (data: ICreateAttachmentsParams) => {
   const { userId } = auth();
@@ -22,7 +25,7 @@ export const createAttachment = async (data: ICreateAttachmentsParams) => {
     });
 
     if (!courseOwner) {
-      return { error: "You're unauthorized! Please login to your account." };
+      return { error: 'You do not own this course' };
     }
 
     const newAttachments = await prisma.attachment.create({
@@ -34,6 +37,37 @@ export const createAttachment = async (data: ICreateAttachmentsParams) => {
     });
     revalidatePath(pathname);
     return { newAttachments };
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const deleteAttachment = async (data: IDeleteAttachmentParams) => {
+  const { userId } = auth();
+  const { attachmentId, courseId, pathname } = data;
+  try {
+    if (!userId) {
+      return { error: "You're unauthorized! Please login to your account." };
+    }
+    const courseOwner = await prisma.course.findUnique({
+      where: {
+        id: courseId,
+        userId
+      }
+    });
+
+    if (!courseOwner) {
+      return { error: 'You do not own this course' };
+    }
+
+    const deleteAttachment = await prisma.attachment.delete({
+      where: {
+        id: attachmentId,
+        courseId: courseId
+      }
+    });
+    revalidatePath(pathname);
+    return { deleteAttachment };
   } catch (error) {
     handleError(error);
   }

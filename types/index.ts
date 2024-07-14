@@ -5,3 +5,9 @@ export type TLink = {
   label: string;
   href: string;
 };
+
+
+export type TDeleteAttachment = {
+  courseId: string;
+  attachmentId: string
+}

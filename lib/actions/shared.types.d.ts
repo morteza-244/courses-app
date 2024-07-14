@@ -8,6 +8,12 @@ export interface IUpdateCourseTitleParams {
 
 export interface ICreateAttachmentsParams {
   courseId: string;
-  url: string
-  pathname: string
+  url: string;
+  pathname: string;
+}
+
+export interface IDeleteAttachmentParams {
+  courseId: string;
+  attachmentId: string;
+  pathname: string;
 }
