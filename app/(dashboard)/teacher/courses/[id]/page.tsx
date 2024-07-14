@@ -1,9 +1,9 @@
-import CourseCategoryForm from '@/app/(dashboard)/_components/forms/CourseCategoryForm';
-import CoursePriceForm from '@/app/(dashboard)/_components/forms/CoursePriceForm';
 import { IconBadge } from '@/components/ui/icon-badge';
 import {
+  CourseCategoryForm,
   CourseDescriptionForm,
   CourseImageForm,
+  CoursePriceForm,
   TitleForm
 } from '@/dashboardComponents/forms';
 import { getCategories } from '@/lib/actions/category.action';
@@ -41,7 +41,7 @@ const CourseDetail = async ({ params }: { params: { id: string } }) => {
           Complete all fields {completionText}
         </span>
       </div>
-      <div className='grid grid-cols-1 gap-5 gap-x-5 md:grid-cols-2'>
+      <div className='grid grid-cols-1 gap-5 lg:grid-cols-2'>
         <div className='space-y-6'>
           <div className='flex items-center gap-x-2'>
             <IconBadge icon={LayoutDashboard} />
