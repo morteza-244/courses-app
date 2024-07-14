@@ -1,5 +1,6 @@
 import { IconBadge } from '@/components/ui/icon-badge';
 import {
+  CourseAttachmentsForm,
   CourseCategoryForm,
   CourseDescriptionForm,
   CourseImageForm,
@@ -9,7 +10,7 @@ import {
 import { getCategories } from '@/lib/actions/category.action';
 import { getCourseById } from '@/lib/actions/course.action';
 import { auth } from '@clerk/nextjs/server';
-import { LayoutDashboard, ListChecks } from 'lucide-react';
+import { File, LayoutDashboard, ListChecks } from 'lucide-react';
 import { redirect } from 'next/navigation';
 
 const CourseDetail = async ({ params }: { params: { id: string } }) => {
@@ -69,6 +70,13 @@ const CourseDetail = async ({ params }: { params: { id: string } }) => {
             </h2>
           </div>
           <CoursePriceForm courseId={course.id} price={course.price!} />
+          <div className='flex items-center gap-x-2'>
+            <IconBadge icon={File} />
+            <h2 className='font-semibold sm:text-[18px] md:text-[15px] lg:text-xl'>
+              Resources & attachments
+            </h2>
+          </div>
+          <CourseAttachmentsForm course={course} courseId={course.id} />
         </div>
       </div>
     </div>
