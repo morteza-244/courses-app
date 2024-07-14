@@ -5,3 +5,9 @@ export interface IUpdateCourseTitleParams {
   courseId: string;
   pathname: string;
 }
+
+export interface ICreateAttachmentsParams {
+  courseId: string;
+  url: string
+  pathname: string
+}

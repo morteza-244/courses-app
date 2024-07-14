@@ -1,10 +1,13 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { FileUploader } from '@/dashboardComponents/shared';
+import { ToastMessage } from '@/enums';
+import { createAttachment } from '@/lib/actions/attachments.action';
 import { Attachment, Course } from '@prisma/client';
 import { PlusCircle } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface CourseAttachmentsFormProps {
   course: Course & { attachment: Attachment[] };
@@ -23,7 +26,21 @@ const CourseAttachmentsForm = ({
   };
 
   const onSubmit = async (data: { url: string }) => {
-    console.log(data.url);
+    try {
+      const res = await createAttachment({
+        courseId,
+        url: data.url,
+        pathname
+      });
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success(ToastMessage.success);
+        toggleEditing();
+      }
+    } catch {
+      toast.error(ToastMessage.error);
+    }
   };
 
   return (
