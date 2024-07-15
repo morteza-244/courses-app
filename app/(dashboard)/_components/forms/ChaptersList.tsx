@@ -2,6 +2,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { TReorderData } from '@/types';
 import {
   DragDropContext,
   Draggable,
@@ -13,7 +14,7 @@ import { Grip, Pencil } from 'lucide-react';
 import { useEffect, useState } from 'react';
 interface ChaptersListProps {
   items: Chapter[];
-  onReorder: (updateData: { id: string; position: number }[]) => void;
+  onReorder: (updateData: TReorderData[]) => void;
   onEdit: (id: string) => void;
 }
 

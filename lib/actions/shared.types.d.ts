@@ -1,3 +1,4 @@
+import { TReorderData } from '@/types';
 import { Course } from '@prisma/client';
 
 export interface IUpdateCourseTitleParams {
@@ -15,6 +16,12 @@ export interface ICreateAttachmentsParams {
 export interface ICreateChaptersParams {
   courseId: string;
   title: string;
+  pathname: string;
+}
+
+export interface IReorderChaptersParams {
+  courseId: string;
+  list: TReorderData[];
   pathname: string;
 }
 

@@ -6,8 +6,12 @@ export type TLink = {
   href: string;
 };
 
-
 export type TDeleteAttachment = {
   courseId: string;
-  attachmentId: string
-}
+  attachmentId: string;
+};
+
+export type TReorderData = {
+  id: string;
+  position: number;
+};
