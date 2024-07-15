@@ -19,6 +19,7 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import ChaptersList from './ChaptersList';
 
 interface CourseChaptersFormProps {
   course: Course & { chapters: Chapter[] };
@@ -115,6 +116,11 @@ const CourseChaptersForm = ({ courseId, course }: CourseChaptersFormProps) => {
           </small>
         </div>
       )}
+      <ChaptersList
+        items={course.chapters}
+        onEdit={() => {}}
+        onReorder={() => {}}
+      />
     </div>
   );
 };
