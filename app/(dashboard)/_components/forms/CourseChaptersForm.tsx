@@ -9,6 +9,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { EditSubmitButton } from '@/dashboardComponents/shared';
+import { ToastMessage } from '@/enums';
+import { createChapter } from '@/lib/actions/chapter.action';
 import { courseChapterSchema, TCourseChapterFormData } from '@/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Chapter, Course } from '@prisma/client';
@@ -16,6 +18,7 @@ import { PlusCircle } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 interface CourseChaptersFormProps {
   course: Course & { chapters: Chapter[] };
@@ -39,7 +42,24 @@ const CourseChaptersForm = ({ courseId, course }: CourseChaptersFormProps) => {
   };
 
   const onSubmit = async (data: TCourseChapterFormData) => {
-    console.log(data);
+    try {
+      setIsPending(true);
+      const res = await createChapter({
+        courseId,
+        title: data.title,
+        pathname
+      });
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success(ToastMessage.success);
+        toggleCreating();
+      }
+    } catch {
+      toast.error(ToastMessage.error);
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (

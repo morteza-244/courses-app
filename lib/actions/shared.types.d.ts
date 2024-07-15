@@ -12,6 +12,12 @@ export interface ICreateAttachmentsParams {
   pathname: string;
 }
 
+export interface ICreateChaptersParams {
+  courseId: string;
+  title: string;
+  pathname: string;
+}
+
 export interface IDeleteAttachmentParams {
   courseId: string;
   attachmentId: string;
