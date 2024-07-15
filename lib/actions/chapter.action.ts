@@ -5,7 +5,11 @@ import prisma from '@/prisma/client';
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { ICreateChaptersParams, IReorderChaptersParams } from './shared.types';
+import {
+  ICreateChaptersParams,
+  IReorderChaptersParams,
+  IUpdateChapterParams
+} from './shared.types';
 
 export const createChapter = async (data: ICreateChaptersParams) => {
   const { userId } = auth();
@@ -99,6 +103,40 @@ export const getChapterById = async (id: string) => {
       }
     });
     return chapter;
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const updateChapter = async (data: IUpdateChapterParams) => {
+  const { userId } = auth();
+  const { chapter, chapterId, courseId, pathname } = data;
+  try {
+    if (!userId) {
+      return { error: "You're unauthorized! Please login to your account." };
+    }
+
+    const courseOwner = await prisma.course.findUnique({
+      where: {
+        id: courseId,
+        userId
+      }
+    });
+
+    if (!courseOwner) {
+      return { error: 'You do not own this course' };
+    }
+
+    const updatedChapter = await prisma.chapter.update({
+      where: {
+        courseId,
+        id: chapterId
+      },
+      data: { ...chapter }
+    });
+
+    revalidatePath(pathname);
+    return { updatedChapter };
   } catch (error) {
     handleError(error);
   }

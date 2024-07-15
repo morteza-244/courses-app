@@ -1,9 +1,16 @@
 import { TReorderData } from '@/types';
-import { Course } from '@prisma/client';
+import { Chapter, Course } from '@prisma/client';
 
 export interface IUpdateCourseTitleParams {
   course: Partial<Course>;
   courseId: string;
+  pathname: string;
+}
+
+export interface IUpdateChapterParams {
+  chapter: Partial<Chapter>;
+  courseId: string;
+  chapterId: string;
   pathname: string;
 }
 

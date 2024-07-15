@@ -11,7 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { EditSubmitButton } from '@/dashboardComponents/shared';
 import { ToastMessage } from '@/enums';
-import { updateCourseTitle } from '@/lib/actions/course.action';
+import { updateChapter } from '@/lib/actions/chapter.action';
 import { TCourseNameFormData, courseNameFormSchema } from '@/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Pencil } from 'lucide-react';
@@ -26,7 +26,12 @@ interface ChapterTitleFormProps {
   chapterId: string;
 }
 
-const ChapterTitleForm = ({ title, courseId }: ChapterTitleFormProps) => {
+const ChapterTitleForm = ({
+  title,
+  courseId,
+  chapterId
+}: ChapterTitleFormProps) => {
+    
   const [isPending, setIsPending] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const pathname = usePathname();
@@ -45,7 +50,27 @@ const ChapterTitleForm = ({ title, courseId }: ChapterTitleFormProps) => {
   const { isValid, isSubmitting } = form.formState;
 
   const onSubmit = async (data: TCourseNameFormData) => {
-    console.log(data)
+    try {
+      setIsPending(true);
+      const res = await updateChapter({
+        courseId,
+        chapterId,
+        chapter: {
+          title: data.title
+        },
+        pathname
+      });
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success(ToastMessage.success);
+        toggleEditing();
+      }
+    } catch {
+      toast.error(ToastMessage.error);
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
