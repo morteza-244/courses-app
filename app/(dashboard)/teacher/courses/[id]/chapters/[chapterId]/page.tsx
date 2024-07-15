@@ -1,5 +1,7 @@
+import { IconBadge } from '@/components/ui/icon-badge';
+import { ChapterTitleForm } from '@/dashboardComponents/forms/chapter';
 import { getChapterById } from '@/lib/actions/chapter.action';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -36,6 +38,21 @@ const ChapterIdPage = async ({
         <span className='text-sm text-slate-500'>
           Complete all fields {completionText}
         </span>
+      </div>
+      <div className='grid grid-cols-1 gap-5 lg:grid-cols-2'>
+        <div className='space-y-6'>
+          <div className='flex items-center gap-x-2'>
+            <IconBadge icon={LayoutDashboard} />
+            <h2 className='font-semibold sm:text-[18px] md:text-[15px] lg:text-xl'>
+              Customize your chapter
+            </h2>
+          </div>
+          <ChapterTitleForm
+            chapterId={chapter.id}
+            title={chapter.title}
+            courseId={chapter.courseId}
+          />
+        </div>
       </div>
     </div>
   );
