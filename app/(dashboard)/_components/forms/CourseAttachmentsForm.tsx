@@ -22,7 +22,7 @@ const CourseAttachmentsForm = ({
   courseId,
   course
 }: CourseAttachmentsFormProps) => {
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const pathname = usePathname();
 
@@ -50,7 +50,7 @@ const CourseAttachmentsForm = ({
 
   const onDelete = async (data: TDeleteAttachment) => {
     try {
-      setIsDeleting(true);
+      setDeletingId(data.attachmentId);
       const res = await deleteAttachment({
         courseId: data.courseId,
         attachmentId: data.attachmentId,
@@ -64,7 +64,7 @@ const CourseAttachmentsForm = ({
     } catch {
       toast.error(ToastMessage.error);
     } finally {
-      setIsDeleting(false);
+      setDeletingId(null);
     }
   };
 
@@ -115,7 +115,7 @@ const CourseAttachmentsForm = ({
                     size={'icon'}
                     variant={'secondary'}
                   >
-                    {isDeleting ? (
+                    {deletingId === item.id ? (
                       <Loader2 size={17} className='animate-spin' />
                     ) : (
                       <Trash size={17} className='text-zinc-900' />
