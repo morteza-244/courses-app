@@ -2,6 +2,7 @@ import { IconBadge } from '@/components/ui/icon-badge';
 import {
   CourseAttachmentsForm,
   CourseCategoryForm,
+  CourseChaptersForm,
   CourseDescriptionForm,
   CourseImageForm,
   CoursePriceForm,
@@ -23,7 +24,8 @@ const CourseDetail = async ({ params }: { params: { id: string } }) => {
     course.description,
     course.price,
     course.imageUrl,
-    course.categoryId
+    course.categoryId,
+    course.chapters.some(chapter => chapter.isPublished)
   ];
 
   const totalFields = requiredFields.length;
@@ -69,6 +71,7 @@ const CourseDetail = async ({ params }: { params: { id: string } }) => {
               Course chapters
             </h2>
           </div>
+          <CourseChaptersForm course={course} courseId={course.id} />
           <CoursePriceForm courseId={course.id} price={course.price!} />
           <div className='flex items-center gap-x-2'>
             <IconBadge icon={File} />

@@ -5,6 +5,7 @@ import prisma from '@/prisma/client';
 import { TCourseNameFormData } from '@/validation';
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { IUpdateCourseTitleParams } from './shared.types';
 
 export const createCourse = async (data: TCourseNameFormData) => {
@@ -28,12 +29,22 @@ export const createCourse = async (data: TCourseNameFormData) => {
 };
 
 export const getCourseById = async (id: string) => {
+  const { userId } = auth();
   try {
+    if (!userId) {
+      redirect('/');
+    }
     const course = await prisma.course.findUnique({
       where: {
-        id
+        id,
+        userId
       },
       include: {
+        chapters: {
+          orderBy: {
+            position: 'asc'
+          }
+        },
         attachment: {
           orderBy: {
             createdAt: 'asc'
@@ -42,7 +53,7 @@ export const getCourseById = async (id: string) => {
       }
     });
 
-    return course;
+    return  course ;
   } catch (error) {
     handleError(error);
   }
