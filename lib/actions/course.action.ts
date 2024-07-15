@@ -53,7 +53,7 @@ export const getCourseById = async (id: string) => {
       }
     });
 
-    return  course ;
+    return course;
   } catch (error) {
     handleError(error);
   }

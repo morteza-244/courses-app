@@ -4,6 +4,7 @@ import { handleError } from '@/lib/utils';
 import prisma from '@/prisma/client';
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { ICreateChaptersParams, IReorderChaptersParams } from './shared.types';
 
 export const createChapter = async (data: ICreateChaptersParams) => {
@@ -78,6 +79,26 @@ export const reorderChapter = async (data: IReorderChaptersParams) => {
     }
     revalidatePath(pathname);
     return { message: 'Success' };
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const getChapterById = async (id: string) => {
+  const { userId } = auth();
+  try {
+    if (!userId) {
+      redirect('/');
+    }
+    const chapter = await prisma.chapter.findUnique({
+      where: {
+        id
+      },
+      include: {
+        muxData: true
+      }
+    });
+    return chapter;
   } catch (error) {
     handleError(error);
   }
