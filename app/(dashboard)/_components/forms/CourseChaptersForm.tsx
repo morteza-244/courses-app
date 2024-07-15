@@ -16,7 +16,7 @@ import { courseChapterSchema, TCourseChapterFormData } from '@/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Chapter, Course } from '@prisma/client';
 import { PlusCircle } from 'lucide-react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -31,6 +31,7 @@ interface CourseChaptersFormProps {
 const CourseChaptersForm = ({ courseId, course }: CourseChaptersFormProps) => {
   const [isCreating, setIsCreating] = useState(false);
   const [isPending, setIsPending] = useState(false);
+  const router = useRouter();
   const pathname = usePathname();
   const form = useForm<TCourseChapterFormData>({
     resolver: zodResolver(courseChapterSchema),
@@ -86,6 +87,10 @@ const CourseChaptersForm = ({ courseId, course }: CourseChaptersFormProps) => {
     }
   };
 
+  const onEdit = (chapterId: string) => {
+    router.push(`/teacher/courses/${courseId}/chapters/${chapterId}`);
+  };
+
   return (
     <div className='relative space-y-2.5 rounded-md bg-slate-200 p-4'>
       {isPending && <ReorderSkeleton />}
@@ -139,7 +144,7 @@ const CourseChaptersForm = ({ courseId, course }: CourseChaptersFormProps) => {
       )}
       <ChaptersList
         items={course.chapters || []}
-        onEdit={() => {}}
+        onEdit={onEdit}
         onReorder={onReorder}
       />
       <small className='text-muted-foreground'>
