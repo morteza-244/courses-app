@@ -29,10 +29,16 @@ export const coursePriceSchema = z.object({
 export type TCoursePriceFormData = z.infer<typeof coursePriceSchema>;
 
 export const courseChapterSchema = z.object({
-  title: z.string().min(2),
+  title: z.string().min(2)
 });
 
 export type TCourseChapterFormData = z.infer<typeof courseChapterSchema>;
+
+export const chapterAccessSchema = z.object({
+  isFree: z.boolean().default(false)
+});
+
+export type TChapterAccessFormData = z.infer<typeof chapterAccessSchema>;
 
 export const categoryFormSchema = z.object({
   title: z.string().min(3, { message: 'Title must be at least 3 character' }),

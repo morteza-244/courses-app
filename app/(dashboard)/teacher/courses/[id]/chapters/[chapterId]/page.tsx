@@ -1,8 +1,11 @@
-import ChapterDescriptionForm from '@/app/(dashboard)/_components/forms/chapter/ChapterDescriptionForm';
 import { IconBadge } from '@/components/ui/icon-badge';
-import { ChapterTitleForm } from '@/dashboardComponents/forms/chapter';
+import {
+  ChapterAccessForm,
+  ChapterDescriptionForm,
+  ChapterTitleForm
+} from '@/dashboardComponents/forms/chapter';
 import { getChapterById } from '@/lib/actions/chapter.action';
-import { ArrowLeft, LayoutDashboard } from 'lucide-react';
+import { ArrowLeft, Eye, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -23,7 +26,7 @@ const ChapterIdPage = async ({
   const completionText = `(${completedFields}/${totalFields})`;
 
   return (
-    <div>
+    <div className='space-y-5'>
       <div className='flex items-center justify-between'>
         <div className='w-full'>
           <Link
@@ -35,7 +38,7 @@ const ChapterIdPage = async ({
           </Link>
         </div>
       </div>
-      <div className='flex flex-col gap-y-2'>
+      <div className='flex flex-col'>
         <span className='text-sm text-slate-500'>
           Complete all fields {completionText}
         </span>
@@ -56,6 +59,19 @@ const ChapterIdPage = async ({
           <ChapterDescriptionForm
             chapterId={chapter.id}
             description={chapter.description!}
+            courseId={chapter.courseId}
+          />
+        </div>
+        <div className='space-y-6'>
+          <div className='flex items-center gap-x-2'>
+            <IconBadge icon={Eye} />
+            <h2 className='font-semibold sm:text-[18px] md:text-[15px] lg:text-xl'>
+              Access settings
+            </h2>
+          </div>
+          <ChapterAccessForm
+            isFree={chapter.isFree}
+            chapterId={chapter.id}
             courseId={chapter.courseId}
           />
         </div>
