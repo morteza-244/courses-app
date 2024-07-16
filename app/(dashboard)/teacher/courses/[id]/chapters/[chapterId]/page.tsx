@@ -2,10 +2,11 @@ import { IconBadge } from '@/components/ui/icon-badge';
 import {
   ChapterAccessForm,
   ChapterDescriptionForm,
-  ChapterTitleForm
+  ChapterTitleForm,
+  ChapterVideoForm
 } from '@/dashboardComponents/forms/chapter';
 import { getChapterById } from '@/lib/actions/chapter.action';
-import { ArrowLeft, Eye, LayoutDashboard } from 'lucide-react';
+import { ArrowLeft, Eye, LayoutDashboard, Video } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -61,8 +62,6 @@ const ChapterIdPage = async ({
             description={chapter.description!}
             courseId={chapter.courseId}
           />
-        </div>
-        <div className='space-y-6'>
           <div className='flex items-center gap-x-2'>
             <IconBadge icon={Eye} />
             <h2 className='font-semibold sm:text-[18px] md:text-[15px] lg:text-xl'>
@@ -73,6 +72,19 @@ const ChapterIdPage = async ({
             isFree={chapter.isFree}
             chapterId={chapter.id}
             courseId={chapter.courseId}
+          />
+        </div>
+        <div className='space-y-6'>
+          <div className='flex items-center gap-x-2'>
+            <IconBadge icon={Video} />
+            <h2 className='font-semibold sm:text-[18px] md:text-[15px] lg:text-xl'>
+              Add a video
+            </h2>
+          </div>
+          <ChapterVideoForm
+            chapter={chapter}
+            courseId={chapter.courseId}
+            chapterId={chapter.id}
           />
         </div>
       </div>
