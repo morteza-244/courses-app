@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { FileUploader } from '@/dashboardComponents/shared';
 import { ToastMessage } from '@/enums';
 import { updateChapter } from '@/lib/actions/chapter.action';
+import MuxPlayer from '@mux/mux-player-react';
 import { Chapter, MuxData } from '@prisma/client';
 import { Pencil, PlusCircle } from 'lucide-react';
 import { usePathname } from 'next/navigation';
@@ -80,7 +81,9 @@ const ChapterVideoForm = ({
             <img src='/images/file-upload.svg' alt='Upload' />
           </div>
         ) : (
-          <div className='relative aspect-video'>Video uploaded</div>
+          <div className='relative aspect-video'>
+            <MuxPlayer playbackId={chapter.muxData?.playbackId || ""} />
+          </div>
         ))}
 
       {isEditing && (
