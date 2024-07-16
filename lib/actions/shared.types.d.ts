@@ -37,3 +37,8 @@ export interface IDeleteAttachmentParams {
   attachmentId: string;
   pathname: string;
 }
+
+export interface IDeleteChapterParams {
+  courseId: string;
+  chapterId: string;
+}

@@ -8,9 +8,15 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import {
   ICreateChaptersParams,
+  IDeleteChapterParams,
   IReorderChaptersParams,
   IUpdateChapterParams
 } from './shared.types';
+
+const { video } = new Mux({
+  tokenId: process.env.MUX_TOKEN_ID,
+  tokenSecret: process.env.MUX_TOKEN_SECRET
+});
 
 export const createChapter = async (data: ICreateChaptersParams) => {
   const { userId } = auth();
@@ -112,10 +118,7 @@ export const getChapterById = async (id: string) => {
 export const updateChapter = async (data: IUpdateChapterParams) => {
   const { userId } = auth();
   const { chapter, chapterId, courseId, pathname } = data;
-  const { video } = new Mux({
-    tokenId: process.env.MUX_TOKEN_ID,
-    tokenSecret: process.env.MUX_TOKEN_SECRET
-  });
+
   try {
     if (!userId) {
       return { error: "You're unauthorized! Please login to your account." };
@@ -172,6 +175,83 @@ export const updateChapter = async (data: IUpdateChapterParams) => {
 
     revalidatePath(pathname);
     return { updatedChapter };
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const deleteChapter = async (data: IDeleteChapterParams) => {
+  const { userId } = auth();
+  const { courseId, chapterId } = data;
+  try {
+    if (!userId) {
+      return { error: "You're unauthorized! Please login to your account." };
+    }
+
+    const courseOwner = await prisma.course.findUnique({
+      where: {
+        id: courseId,
+        userId
+      }
+    });
+
+    if (!courseOwner) {
+      return { error: 'You do not own this course' };
+    }
+
+    const chapter = await prisma.chapter.findUnique({
+      where: {
+        id: chapterId,
+        courseId
+      }
+    });
+
+    if (!chapter) {
+      return { error: 'Chapter not found!' };
+    }
+
+    if (chapter.videoUrl) {
+      const existingMuxData = await prisma.muxData.findUnique({
+        where: {
+          chapterId
+        }
+      });
+
+      if (existingMuxData) {
+        await video.assets.delete(existingMuxData.assetId);
+        await prisma.muxData.delete({
+          where: {
+            id: existingMuxData.id
+          }
+        });
+      }
+    }
+
+    const deletedChapter = await prisma.chapter.delete({
+      where: {
+        id: chapterId
+      }
+    });
+
+    const publishedChapterInCourse = await prisma.chapter.findMany({
+      where: {
+        courseId,
+        isPublished: true
+      }
+    });
+
+    if (!publishedChapterInCourse.length) {
+      await prisma.course.update({
+        where: {
+          id: courseId
+        },
+        data: {
+          isPublished: false
+        }
+      });
+    }
+
+    return { deletedChapter };
   } catch (error) {
     handleError(error);
   }
