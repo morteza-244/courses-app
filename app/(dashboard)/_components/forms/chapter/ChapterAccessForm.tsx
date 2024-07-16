@@ -2,13 +2,15 @@
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage
 } from '@/components/ui/form';
 import { EditSubmitButton } from '@/dashboardComponents/shared';
+import { ToastMessage } from '@/enums';
+import { updateChapter } from '@/lib/actions/chapter.action';
 import { cn } from '@/lib/utils';
 import { chapterAccessSchema, TChapterAccessFormData } from '@/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,6 +18,7 @@ import { Pencil } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 interface ChapterAccessFormProps {
   isFree: boolean;
@@ -44,7 +47,27 @@ const ChapterAccessForm = ({
   };
 
   const onSubmit = async (data: TChapterAccessFormData) => {
-    console.log(data);
+    try {
+      setIsPending(true);
+      const res = await updateChapter({
+        courseId,
+        chapterId,
+        chapter: {
+          isFree: data.isFree
+        },
+        pathname
+      });
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success(ToastMessage.success);
+        toggleEditing();
+      }
+    } catch {
+      toast.error(ToastMessage.error);
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
@@ -88,12 +111,17 @@ const ChapterAccessForm = ({
                 <FormItem className='w-full'>
                   <FormControl>
                     <div className='flex items-center space-x-2'>
-                      <Checkbox id='free' />
+                      <Checkbox
+                        id='free'
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
                       <label
                         htmlFor='free'
                         className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
                       >
-                        Check this box if you want to make this chapter free for preview
+                        Check this box if you want to make this chapter free for
+                        preview
                       </label>
                     </div>
                   </FormControl>
