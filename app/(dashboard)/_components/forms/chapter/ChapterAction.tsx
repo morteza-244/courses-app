@@ -1,4 +1,5 @@
 'use client';
+import { ConfirmModal } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { Trash } from 'lucide-react';
 
@@ -25,9 +26,11 @@ const ChapterAction = ({
       >
         {isPublished ? 'Unpublished' : 'Publish'}
       </Button>
-      <Button size={'sm'}>
-        <Trash size={20} />
-      </Button>
+      <ConfirmModal onConfirm={() => {}}>
+        <Button size={'sm'}>
+          <Trash size={20} />
+        </Button>
+      </ConfirmModal>
     </div>
   );
 };
