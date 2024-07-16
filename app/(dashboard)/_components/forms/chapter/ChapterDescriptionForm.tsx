@@ -1,6 +1,5 @@
 'use client';
-import Editor from '@/components/shared/Editor';
-import Preview from '@/components/shared/Preview';
+import { Editor, Preview } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import {
   Form,
