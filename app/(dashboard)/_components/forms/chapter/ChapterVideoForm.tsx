@@ -1,10 +1,13 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { FileUploader } from '@/dashboardComponents/shared';
+import { ToastMessage } from '@/enums';
+import { updateChapter } from '@/lib/actions/chapter.action';
 import { Chapter, MuxData } from '@prisma/client';
 import { Pencil, PlusCircle } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface ChapterVideoFormProps {
   chapter: Chapter & { muxData?: MuxData | null };
@@ -25,7 +28,24 @@ const ChapterVideoForm = ({
   };
 
   const onSubmit = async (data: { videoUrl: string }) => {
-    console.log(data.videoUrl);
+    try {
+      const res = await updateChapter({
+        courseId,
+        chapterId,
+        chapter: {
+          videoUrl: data.videoUrl
+        },
+        pathname
+      });
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success(ToastMessage.success);
+        toggleEditing();
+      }
+    } catch {
+      toast.error(ToastMessage.error);
+    }
   };
 
   return (
