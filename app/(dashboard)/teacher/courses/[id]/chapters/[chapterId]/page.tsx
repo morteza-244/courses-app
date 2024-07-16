@@ -2,6 +2,7 @@ import { Banner } from '@/components/ui/banner';
 import { IconBadge } from '@/components/ui/icon-badge';
 import {
   ChapterAccessForm,
+  ChapterAction,
   ChapterDescriptionForm,
   ChapterTitleForm,
   ChapterVideoForm
@@ -26,7 +27,7 @@ const ChapterIdPage = async ({
   const totalFields = requiredFields.length;
   const completedFields = requiredFields.filter(Boolean).length;
   const completionText = `(${completedFields}/${totalFields})`;
-
+  const isComplete = requiredFields.every(Boolean);
   return (
     <div className='space-y-5'>
       {!chapter.isPublished && (
@@ -53,6 +54,12 @@ const ChapterIdPage = async ({
           Complete all fields {completionText}
         </span>
       </div>
+      <ChapterAction
+        chapterId={chapter.id}
+        courseId={chapter.courseId}
+        disabled={!isComplete}
+        isPublished={chapter.isPublished}
+      />
       <div className='grid grid-cols-1 gap-5 lg:grid-cols-2'>
         <div className='space-y-6'>
           <div className='flex items-center gap-x-2'>
