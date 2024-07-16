@@ -1,3 +1,4 @@
+import ChapterDescriptionForm from '@/app/(dashboard)/_components/forms/chapter/ChapterDescriptionForm';
 import { IconBadge } from '@/components/ui/icon-badge';
 import { ChapterTitleForm } from '@/dashboardComponents/forms/chapter';
 import { getChapterById } from '@/lib/actions/chapter.action';
@@ -50,6 +51,11 @@ const ChapterIdPage = async ({
           <ChapterTitleForm
             chapterId={chapter.id}
             title={chapter.title}
+            courseId={chapter.courseId}
+          />
+          <ChapterDescriptionForm
+            chapterId={chapter.id}
+            description={chapter.description!}
             courseId={chapter.courseId}
           />
         </div>
