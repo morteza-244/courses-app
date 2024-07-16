@@ -1,3 +1,4 @@
+import { Banner } from '@/components/ui/banner';
 import { IconBadge } from '@/components/ui/icon-badge';
 import {
   ChapterAccessForm,
@@ -28,6 +29,14 @@ const ChapterIdPage = async ({
 
   return (
     <div className='space-y-5'>
+      {!chapter.isPublished && (
+        <Banner
+          variant={'warning'}
+          label={
+            'This chapter is unpublished. It will not be visible in the course'
+          }
+        />
+      )}
       <div className='flex items-center justify-between'>
         <div className='w-full'>
           <Link
