@@ -3,6 +3,7 @@
 import { handleError } from '@/lib/utils';
 import prisma from '@/prisma/client';
 import { auth } from '@clerk/nextjs/server';
+import Mux from '@mux/mux-node';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import {
@@ -111,6 +112,10 @@ export const getChapterById = async (id: string) => {
 export const updateChapter = async (data: IUpdateChapterParams) => {
   const { userId } = auth();
   const { chapter, chapterId, courseId, pathname } = data;
+  const { video } = new Mux({
+    tokenId: process.env.MUX_TOKEN_ID,
+    tokenSecret: process.env.MUX_TOKEN_SECRET
+  });
   try {
     if (!userId) {
       return { error: "You're unauthorized! Please login to your account." };
@@ -134,6 +139,36 @@ export const updateChapter = async (data: IUpdateChapterParams) => {
       },
       data: { ...chapter }
     });
+
+    if (chapter.videoUrl) {
+      const existingMuxData = await prisma.muxData.findFirst({
+        where: {
+          chapterId
+        }
+      });
+
+      if (existingMuxData) {
+        await video.assets.delete(existingMuxData.assetId);
+        await prisma.muxData.delete({
+          where: {
+            id: existingMuxData.id
+          }
+        });
+      }
+      const asset = await video.assets.create({
+        input: [{ url: chapter.videoUrl }],
+        playback_policy: ['public'],
+        test: false
+      });
+
+      await prisma.muxData.create({
+        data: {
+          chapterId,
+          assetId: asset.id,
+          playbackId: asset.playback_ids?.[0]?.id
+        }
+      });
+    }
 
     revalidatePath(pathname);
     return { updatedChapter };
