@@ -10,6 +10,8 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { EditSubmitButton } from '@/dashboardComponents/shared';
+import { ToastMessage } from '@/enums';
+import { updateChapter } from '@/lib/actions/chapter.action';
 import { cn } from '@/lib/utils';
 import { courseDescribeSchema, TCourseDescribeFormData } from '@/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,6 +19,7 @@ import { Pencil } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 interface ChapterDescriptionFormProps {
   description: string;
@@ -45,7 +48,27 @@ const ChapterDescriptionForm = ({
   };
 
   const onSubmit = async (data: TCourseDescribeFormData) => {
-    console.log(data);
+    try {
+      setIsPending(true);
+      const res = await updateChapter({
+        courseId,
+        chapterId,
+        chapter: {
+          description: data.description
+        },
+        pathname
+      });
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success(ToastMessage.success);
+        toggleEditing();
+      }
+    } catch {
+      toast.error(ToastMessage.error);
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
