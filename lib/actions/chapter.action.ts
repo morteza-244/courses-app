@@ -9,6 +9,7 @@ import { redirect } from 'next/navigation';
 import {
   ICreateChaptersParams,
   IDeleteChapterParams,
+  IPublishChapterParams,
   IReorderChaptersParams,
   IUpdateChapterParams
 } from './shared.types';
@@ -252,6 +253,64 @@ export const deleteChapter = async (data: IDeleteChapterParams) => {
     }
 
     return { deletedChapter };
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const publishChapter = async (data: IPublishChapterParams) => {
+  const { userId } = auth();
+  const { chapterId, courseId, pathname } = data;
+  try {
+    if (!userId) {
+      return { error: "You're unauthorized! Please login to your account." };
+    }
+
+    const courseOwner = await prisma.course.findUnique({
+      where: {
+        id: courseId,
+        userId
+      }
+    });
+
+    if (!courseOwner) {
+      return { error: 'You do not own this course' };
+    }
+
+    const chapter = await prisma.chapter.findUnique({
+      where: {
+        id: chapterId,
+        courseId
+      }
+    });
+
+    const muxData = await prisma.muxData.findUnique({
+      where: {
+        chapterId: chapterId
+      }
+    });
+
+    if (
+      !chapter ||
+      !muxData ||
+      !chapter.title ||
+      !chapter.description ||
+      !chapter.videoUrl
+    ) {
+      return { error: 'Missing required fields' };
+    }
+
+    const publishedChapter = await prisma.chapter.update({
+      where: {
+        id: chapterId,
+        courseId
+      },
+      data: {
+        isPublished: true
+      }
+    });
+    revalidatePath(pathname)
+    return { publishedChapter };
   } catch (error) {
     handleError(error);
   }

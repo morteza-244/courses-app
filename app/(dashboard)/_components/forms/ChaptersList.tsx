@@ -97,7 +97,11 @@ const ChaptersList = ({ items, onEdit, onReorder }: ChaptersListProps) => {
                       >
                         {chapter.isPublished ? 'Published' : 'Draft'}
                       </Badge>
-                      <Pencil size={20} onClick={() => onEdit(chapter.id)} />
+                      <Pencil
+                        size={20}
+                        onClick={() => onEdit(chapter.id)}
+                        className='cursor-pointer'
+                      />
                     </div>
                   </div>
                 )}
