@@ -3,7 +3,11 @@ import { ConfirmModal } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { SubmitLoading } from '@/dashboardComponents/shared';
 import { ToastMessage } from '@/enums';
-import { deleteChapter, publishChapter } from '@/lib/actions/chapter.action';
+import {
+  deleteChapter,
+  publishChapter,
+  unpublishedChapter
+} from '@/lib/actions/chapter.action';
 import { Loader2, Trash } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -49,14 +53,21 @@ const ChapterAction = ({
   const onClick = async () => {
     try {
       setIsLoading(true);
-      const res = await publishChapter({
-        chapterId,
-        courseId,
-        pathname
-      });
-      if (res?.error) {
-        toast.error(res.error);
+      if (isPublished) {
+        const res = await unpublishedChapter({
+          chapterId,
+          courseId,
+          pathname
+        });
+        if (res?.error) toast.error(res.error);
+        toast.success('Chapter unPublished');
       } else {
+        const res = await publishChapter({
+          chapterId,
+          courseId,
+          pathname
+        });
+        if (res?.error) toast.error(res.error);
         toast.success('Chapter published');
       }
     } catch {

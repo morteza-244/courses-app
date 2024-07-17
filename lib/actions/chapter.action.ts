@@ -309,8 +309,61 @@ export const publishChapter = async (data: IPublishChapterParams) => {
         isPublished: true
       }
     });
-    revalidatePath(pathname)
+    revalidatePath(pathname);
     return { publishedChapter };
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const unpublishedChapter = async (data: IPublishChapterParams) => {
+  const { userId } = auth();
+  const { chapterId, courseId, pathname } = data;
+  try {
+    if (!userId) {
+      return { error: "You're unauthorized! Please login to your account." };
+    }
+
+    const courseOwner = await prisma.course.findUnique({
+      where: {
+        id: courseId,
+        userId
+      }
+    });
+
+    if (!courseOwner) {
+      return { error: 'You do not own this course' };
+    }
+
+    const unPublishedChapter = await prisma.chapter.update({
+      where: {
+        id: chapterId,
+        courseId
+      },
+      data: {
+        isPublished: false
+      }
+    });
+
+    const publishedChapterInCourse = await prisma.chapter.findMany({
+      where: {
+        id: courseId,
+        isPublished: true
+      }
+    });
+
+    if (!publishedChapterInCourse.length) {
+      await prisma.course.update({
+        where: {
+          id: courseId
+        },
+        data: {
+          isPublished: false
+        }
+      });
+    }
+    revalidatePath(pathname);
+    return { unPublishedChapter };
   } catch (error) {
     handleError(error);
   }
