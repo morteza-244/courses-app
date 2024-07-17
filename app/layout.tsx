@@ -3,6 +3,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import ConfettiProvider from '@/components/providers/ConfettiProvider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -20,7 +21,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang='en' className={inter.className}>
         <body>
-          {children}
+          <ConfettiProvider />
           <Toaster
             className={inter.className}
             richColors
@@ -28,6 +29,7 @@ export default function RootLayout({
             duration={1500}
             position='top-center'
           />
+          {children}
         </body>
       </html>
     </ClerkProvider>

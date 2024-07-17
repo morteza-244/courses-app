@@ -8,6 +8,7 @@ import {
   publishCourse,
   unPublishCourse
 } from '@/lib/actions/course.action';
+import { useConfettiStore } from '@/store/confettiStore';
 import { Loader2, Trash } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -26,6 +27,7 @@ const CourseAction = ({
 }: CourseActionProps) => {
   const [isPending, setIsPending] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const confettiOpen = useConfettiStore(s => s.onOpen);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -60,6 +62,7 @@ const CourseAction = ({
         });
         if (res?.error) toast.error(res.error);
         toast.success('Course published');
+        confettiOpen();
       }
     } catch {
       toast.error(ToastMessage.error);
