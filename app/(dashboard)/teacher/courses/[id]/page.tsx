@@ -41,7 +41,7 @@ const CourseDetail = async ({ params }: { params: { id: string } }) => {
   const isComplete = requiredFields.every(Boolean);
   return (
     <div className='space-y-8'>
-      {!isComplete && (
+      {!course.isPublished && (
         <Banner label='This course is unpublished. It will not be visible to the students.' />
       )}
       <div className='flex flex-col gap-y-2'>
