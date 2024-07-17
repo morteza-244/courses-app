@@ -88,7 +88,6 @@ const ChaptersList = ({ items, onEdit, onReorder }: ChaptersListProps) => {
                     </div>
                     {chapter.title}
                     <div className='ml-auto flex items-center gap-x-2 pr-2'>
-                      {chapter.isFree && <Badge>Free</Badge>}
                       <Badge
                         className={cn(
                           'bg-slate-500',
