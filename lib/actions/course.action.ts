@@ -219,3 +219,23 @@ export const unPublishCourse = async (data: IPublishCourseParams) => {
     handleError(error);
   }
 };
+
+export const getCourses = async () => {
+  const { userId } = auth();
+  try {
+    if (!userId) {
+      redirect('/');
+    }
+    const courses = await prisma.course.findMany({
+      where: {
+        userId
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+    return courses;
+  } catch (error) {
+    handleError(error);
+  }
+};
