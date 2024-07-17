@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { cn } from '@/lib/utils';
+import { cn, formatPrice } from '@/lib/utils';
 import { Course } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal, Pencil } from 'lucide-react';
@@ -41,6 +41,10 @@ const columns: ColumnDef<Course>[] = [
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       );
+    },
+    cell: ({ row }) => {
+      const price = parseFloat(row.getValue('price') || '0');
+      return <div>{formatPrice(price)}</div>;
     }
   },
   {
