@@ -77,7 +77,7 @@ const CourseAction = ({
         size={'sm'}
       >
         {isLoading ? (
-          <SubmitLoading />
+          <SubmitLoading color={'black'} />
         ) : isPublished ? (
           'Unpublished'
         ) : (
