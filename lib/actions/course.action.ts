@@ -7,7 +7,7 @@ import { auth } from '@clerk/nextjs/server';
 import Mux from '@mux/mux-node';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { IUpdateCourseTitleParams } from './shared.types';
+import { IPublishCourseParams, IUpdateCourseTitleParams } from './shared.types';
 
 const { video } = new Mux({
   tokenId: process.env.MUX_TOKEN_ID,
@@ -124,6 +124,97 @@ export const deleteCourse = async (courseId: string) => {
     });
 
     return { deletedCourse };
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const publishCourse = async (data: IPublishCourseParams) => {
+  const { userId } = auth();
+  const { courseId, pathname } = data;
+  try {
+    if (!userId) {
+      return { error: "You're unauthorized! Please login to your account." };
+    }
+
+    const course = await prisma.course.findUnique({
+      where: {
+        id: courseId,
+        userId
+      },
+      include: {
+        chapters: {
+          include: {
+            muxData: true
+          }
+        }
+      }
+    });
+
+    if (!course) {
+      return { error: 'Course not found' };
+    }
+
+    const hasPublishedChapter = course.chapters.some(
+      chapter => chapter.isPublished
+    );
+
+    if (
+      !course.title ||
+      !course.imageUrl ||
+      !course.categoryId ||
+      !course.description ||
+      !hasPublishedChapter
+    ) {
+      return { error: 'Missing required fields' };
+    }
+
+    const publishedCourse = await prisma.course.update({
+      where: {
+        id: courseId
+      },
+      data: {
+        isPublished: true
+      }
+    });
+
+    revalidatePath(pathname);
+    return { publishedCourse };
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const unPublishCourse = async (data: IPublishCourseParams) => {
+  const { userId } = auth();
+  const { courseId, pathname } = data;
+  try {
+    if (!userId) {
+      return { error: "You're unauthorized! Please login to your account." };
+    }
+
+    const course = await prisma.course.findUnique({
+      where: {
+        id: courseId,
+        userId
+      }
+    });
+
+    if (!course) {
+      return { error: 'Course not found' };
+    }
+
+    const unPublishedCourse = await prisma.course.update({
+      where: {
+        id: courseId
+      },
+      data: {
+        isPublished: false
+      }
+    });
+
+    revalidatePath(pathname);
+    return { unPublishedCourse };
   } catch (error) {
     handleError(error);
   }

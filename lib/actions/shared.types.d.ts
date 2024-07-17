@@ -49,7 +49,7 @@ export interface IPublishChapterParams {
   pathname: string
 }
 
-export interface IDeleteCourseParams {
+export interface IPublishCourseParams {
   courseId: string;
   pathname: string;
 }
