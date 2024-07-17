@@ -1,5 +1,7 @@
+import { Banner } from '@/components/ui/banner';
 import { IconBadge } from '@/components/ui/icon-badge';
 import {
+  CourseAction,
   CourseAttachmentsForm,
   CourseCategoryForm,
   CourseChaptersForm,
@@ -36,14 +38,23 @@ const CourseDetail = async ({ params }: { params: { id: string } }) => {
     label: category.name,
     value: category.id
   }));
+  const isComplete = requiredFields.every(Boolean);
   return (
     <div className='space-y-8'>
+      {!isComplete && (
+        <Banner label='This course is unpublished. It will not be visible to the students.' />
+      )}
       <div className='flex flex-col gap-y-2'>
         <h1 className='text-2xl font-medium'>Course Setup</h1>
         <span className='text-sm text-slate-500'>
           Complete all fields {completionText}
         </span>
       </div>
+      <CourseAction
+        courseId={course.id}
+        disabled={!isComplete}
+        isPublished={course.isPublished}
+      />
       <div className='grid grid-cols-1 gap-5 lg:grid-cols-2'>
         <div className='space-y-6'>
           <div className='flex items-center gap-x-2'>

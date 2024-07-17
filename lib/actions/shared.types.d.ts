@@ -48,3 +48,8 @@ export interface IPublishChapterParams {
   chapterId: string;
   pathname: string
 }
+
+export interface IDeleteCourseParams {
+  courseId: string;
+  pathname: string;
+}

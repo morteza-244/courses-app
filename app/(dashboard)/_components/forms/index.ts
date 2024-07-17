@@ -1,4 +1,5 @@
 export { default as CategoryForm } from './CategoryForm';
+export { default as CourseAction } from './CourseAction';
 export { default as CourseAttachmentsForm } from './CourseAttachmentsForm';
 export { default as CourseCategoryForm } from './CourseCategoryForm';
 export { default as CourseChaptersForm } from './CourseChaptersForm';
