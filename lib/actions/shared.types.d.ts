@@ -46,10 +46,27 @@ export interface IDeleteChapterParams {
 export interface IPublishChapterParams {
   courseId: string;
   chapterId: string;
-  pathname: string
+  pathname: string;
 }
 
 export interface IPublishCourseParams {
   courseId: string;
   pathname: string;
+}
+
+export interface IGetProgressParams {
+  courseId: string;
+  userId: string;
+}
+
+export interface ICoursesWithProgressWithCategory extends Course {
+  category: Category | null;
+  chapters: { id: string }[];
+  progress: number | null;
+}
+
+export interface IGetAllCoursesParams {
+  userId: string;
+  title?: string;
+  categoryId?: string;
 }

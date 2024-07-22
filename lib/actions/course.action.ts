@@ -7,7 +7,13 @@ import { auth } from '@clerk/nextjs/server';
 import Mux from '@mux/mux-node';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { IPublishCourseParams, IUpdateCourseTitleParams } from './shared.types';
+import { getProgress } from './progress.action';
+import {
+  ICoursesWithProgressWithCategory,
+  IGetAllCoursesParams,
+  IPublishCourseParams,
+  IUpdateCourseTitleParams
+} from './shared.types';
 
 const { video } = new Mux({
   tokenId: process.env.MUX_TOKEN_ID,
@@ -237,5 +243,59 @@ export const getCourses = async () => {
     return courses;
   } catch (error) {
     handleError(error);
+  }
+};
+
+export const getAllCourses = async (
+  data: IGetAllCoursesParams
+): Promise<ICoursesWithProgressWithCategory[]> => {
+  const { userId, categoryId, title } = data;
+  try {
+    const courses = await prisma.course.findMany({
+      where: {
+        isPublished: true,
+        title,
+        categoryId
+      },
+      include: {
+        category: true,
+        chapters: {
+          where: {
+            isPublished: true
+          },
+          select: {
+            id: true
+          }
+        },
+        purchase: {
+          where: {
+            userId
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    const coursesWithProgress: ICoursesWithProgressWithCategory[] =
+      await Promise.all(
+        courses.map(async course => {
+          if (course.purchase.length === 0) {
+            return { ...course, progress: null };
+          }
+          const coursePercentage = await getProgress({
+            courseId: course.id,
+            userId
+          });
+
+          return { ...course, progress: coursePercentage };
+        })
+      );
+
+    return coursesWithProgress;
+  } catch (error) {
+    handleError(error);
+    return [];
   }
 };
