@@ -1,9 +1,10 @@
 import SearchInput from '@/components/shared/SearchInput';
+import Categories from '@/dashboardComponents/Categories';
+import { CoursesList } from '@/dashboardComponents/courses';
 import { getCategories } from '@/lib/actions/category.action';
 import { getAllCourses } from '@/lib/actions/course.action';
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-import Categories from '../_components/Categories';
 
 interface SearchPageParams {
   searchParams: {
@@ -27,9 +28,7 @@ const Browse = async ({ searchParams }: SearchPageParams) => {
         <Categories categories={categories!} />
         <SearchInput />
       </div>
-      {courses.map(course => (
-        <div>{course.price}</div>
-      ))}
+      <CoursesList courses={courses} />
     </div>
   );
 };
